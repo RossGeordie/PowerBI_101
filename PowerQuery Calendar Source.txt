@@ -1,0 +1,33 @@
+let
+    // ONLY EDIT THESE VALUES
+    StartDate = #date(2000, 1, 1),  // Update the date you want your calendar table to start here the format is yyyy, mm, dd
+    EndDateYearOffset = 1, //Set Offset to 0 to use the HardEndDate below 
+    HardEndDate = #date(2024, 12, 31),  // Update the date you want your calendar table to start here the format is yyyy, mm, dd
+    CorpMonthStart = 8,             // Month number for corporate Calendar
+    SoW = 0,                        // First Day of Week - 0 - 6 0 = Sunday, 1 = Monday, 2 =  Tuesday...
+    // END OF CONFIGURATION
+    EndDate = if EndDateYearOffset <> 0 then #date(Date.Year(DateTime.Date(DateTime.LocalNow()))+EndDateYearOffset, 12, 31) else HardEndDate,
+    CurrentDate = DateTime.Date(DateTime.LocalNow()),
+    CorpMonthEnd = CorpMonthStart - 1,
+    CorpDiff = 12 - CorpMonthStart + 1,
+    DayCount = Duration.Days(EndDate - StartDate) + 1,
+    Calendar = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),
+    Table = Table.FromList(Calendar, Splitter.SplitByNothing(), {"Date"}),
+    AddYear = Table.AddColumn(Table, "Year", each Date.Year([Date])),
+    AddMonth = Table.AddColumn(AddYear, "Month", each Date.Month([Date])),
+    AddDay = Table.AddColumn(AddMonth, "Day", each Date.Day([Date])),
+    AddMonthName = Table.AddColumn(AddDay, "Month Name", each Date.ToText([Date], "MMMM")),
+    AddDayName = Table.AddColumn(AddMonthName, "Day Name", each Date.ToText([Date], "dddd")),
+    AddFormattedDate = Table.AddColumn(AddDayName, "Formatted Date", each Date.ToText([Date], "dd-MMM-yyyy")),
+    AddMonthYear = Table.AddColumn(AddFormattedDate, "MonthYear", each Date.ToText([Date], "MMM-yyyy")),
+    AddMonthOffset = Table.AddColumn(AddMonthYear, "Month Offset", each (Date.Year([Date]) - Date.Year(CurrentDate)) * 12 + Date.Month([Date]) - Date.Month(CurrentDate), Int64.Type),
+    AddDayOffset = Table.AddColumn(AddMonthOffset, "Day Offset", each Date.From([Date]) - Date.From(CurrentDate), Int64.Type),
+    AddYearOffset = Table.AddColumn(AddDayOffset, "YearOffset", each Date.Year([Date])- Date.Year(CurrentDate), Int64.Type),
+    AddDayofWeek = Table.AddColumn(AddYearOffset, "DoW", each Date.DayOfWeek([Date]), Int64.Type),
+    AddCorporateMonth = Table.AddColumn(AddDayofWeek, "CorpMonthnum", each if Date.Month([Date]) >= CorpMonthStart then Date.Month([Date]) - CorpMonthEnd else Date.Month([Date]) + CorpDiff, Int64.Type),
+    AddWeekNumber = Table.AddColumn(AddCorporateMonth, "Week Number", each Date.WeekOfYear(Date.AddDays([Date], 7 - Date.DayOfWeek([Date], SoW))), Int64.Type),
+    #"Added Custom" = Table.AddColumn(AddWeekNumber, "CorpYear", each if [Month] > CorpMonthEnd then "FY-" & Text.From([Year]) else "FY-" & Text.From([Year]-1)),
+    AddWeekOffset = Table.AddColumn(#"Added Custom", "Week Offset", each Number.RoundDown(Duration.Days(Date.StartOfWeek([Date], SoW) - Date.StartOfWeek(CurrentDate, SoW)) / 7), Int64.Type),
+    #"Changed Type" = Table.TransformColumnTypes(AddWeekOffset,{{"Date", type date}, {"Year", type text}, {"Month", Int64.Type}, {"Day", Int64.Type}, {"Month Name", type text}, {"Day Name", type text}, {"Formatted Date", type text}, {"MonthYear", type text}, {"Day Offset", Int64.Type}, {"CorpYear", type text}})
+in
+    #"Changed Type"
