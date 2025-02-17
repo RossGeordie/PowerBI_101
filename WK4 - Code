@@ -1,8 +1,29 @@
 Power Query
 
-Text.Select([LAB_USED], {"A".."Z", "a".."z", "0".."9"})
-
+***********
+    FixInspections = Table.TransformColumns(#"Changed Type1", {{"INSPECTION_BY_FIRM", each Text.Select(_, {"A".."Z", "a".."z", "0".."9", " "})}}),
+    FixLab = Table.TransformColumns(#"Changed Type1", {{"LAB_NAME", each Text.Select(_, {"A".."Z", "a".."z", "0".."9", " "})}})
+in
+    FixLab
+***********
 
 DAX
 
+***********
 Inspections = COUNTROWS ( Inspections )
+***********
+
+***********
+Building = COUNTROWS ( Buildings ) 
+***********
+
+***********
+InspectedInYear = 
+VAR _today = YEAR(TODAY())
+VAR _SelDate = INT(MAX('Calendar'[Year]))
+VAR _mYear = SWITCH(TRUE(), _today < _SelDate, _today, _SelDate)
+VAR _Inspected = CALCULATE(COUNTROWS(Inspections), Inspections[REPORTING_YEAR] = _mYear)
+VAR _result = DIVIDE(_Inspected, [Buildings], BLANK())
+RETURN
+_result
+***********
