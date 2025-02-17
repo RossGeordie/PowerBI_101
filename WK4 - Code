@@ -1,0 +1,8 @@
+Power Query
+
+Text.Select([LAB_USED], {"A".."Z", "a".."z", "0".."9"})
+
+
+DAX
+
+Inspections = COUNTROWS ( Inspections )
