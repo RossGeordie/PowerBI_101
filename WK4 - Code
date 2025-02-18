@@ -2,7 +2,7 @@ Power Query
 
 ***********
     FixInspections = Table.TransformColumns(#"Changed Type1", {{"INSPECTION_BY_FIRM", each Text.Select(_, {"A".."Z", "a".."z", "0".."9", " "})}}),
-    FixLab = Table.TransformColumns(#"Changed Type1", {{"LAB_NAME", each Text.Select(_, {"A".."Z", "a".."z", "0".."9", " "})}})
+    FixLab = Table.TransformColumns(FixInspections, {{"LAB_NAME", each Text.Select(_, {"A".."Z", "a".."z", "0".."9", " "})}})
 in
     FixLab
 ***********
