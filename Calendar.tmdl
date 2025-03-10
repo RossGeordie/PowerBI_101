@@ -1,0 +1,203 @@
+createOrReplace
+
+	table Calendar
+		lineageTag: 02201a08-dd09-4782-91b6-e71f694b1594
+		dataCategory: Time
+
+		column Date
+			dataType: dateTime
+			isKey
+			formatString: Long Date
+			lineageTag: eb4ddb7e-83cf-45eb-a9b8-edbe6067ada1
+			summarizeBy: none
+			sourceColumn: Date
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation UnderlyingDateTimeDataType = Date
+
+		column Year
+			dataType: string
+			lineageTag: cfeda500-b4fe-499a-bcec-cf408dde3d75
+			summarizeBy: none
+			sourceColumn: Year
+
+			annotation SummarizationSetBy = Automatic
+
+		column Month
+			dataType: int64
+			formatString: 0
+			lineageTag: dd876ee7-bb3e-4cc2-913d-760c2a96ef29
+			summarizeBy: sum
+			sourceColumn: Month
+
+			annotation SummarizationSetBy = Automatic
+
+		column Day
+			dataType: int64
+			formatString: 0
+			lineageTag: d88baa19-41ee-4b5d-93c6-2496badf3b01
+			summarizeBy: sum
+			sourceColumn: Day
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Month Name'
+			dataType: string
+			lineageTag: a686f071-aea9-43c8-937d-303a1e65776a
+			summarizeBy: none
+			sourceColumn: Month Name
+			sortByColumn: Month
+
+			changedProperty = SortByColumn
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Day Name'
+			dataType: string
+			lineageTag: 3b9c5d7b-4e7f-4884-909c-e1a5f9bac953
+			summarizeBy: none
+			sourceColumn: Day Name
+			sortByColumn: DoW
+
+			changedProperty = SortByColumn
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Formatted Date'
+			dataType: string
+			lineageTag: 63ee1a7f-bf2f-4398-a309-8bed182a288f
+			summarizeBy: none
+			sourceColumn: Formatted Date
+			sortByColumn: Date
+
+			changedProperty = SortByColumn
+
+			annotation SummarizationSetBy = Automatic
+
+		column MonthYear
+			dataType: string
+			lineageTag: 77be45e9-e7c8-4eab-9abe-73783da0b68b
+			summarizeBy: none
+			sourceColumn: MonthYear
+			sortByColumn: 'Month Offset'
+
+			changedProperty = SortByColumn
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Month Offset'
+			dataType: int64
+			formatString: 0
+			lineageTag: 0f2e1d23-ccd7-4f84-a3aa-868f50f0165c
+			summarizeBy: sum
+			sourceColumn: Month Offset
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Day Offset'
+			dataType: int64
+			formatString: 0
+			lineageTag: 8556ef13-c26f-4edc-bccb-eb65f603ec94
+			summarizeBy: sum
+			sourceColumn: Day Offset
+
+			annotation SummarizationSetBy = Automatic
+
+		column YearOffset
+			dataType: int64
+			formatString: 0
+			lineageTag: 86404e30-ab36-48c9-a791-67122e9ad44d
+			summarizeBy: sum
+			sourceColumn: YearOffset
+
+			annotation SummarizationSetBy = Automatic
+
+		column DoW
+			dataType: int64
+			formatString: 0
+			lineageTag: 29257fb7-608e-4a55-af04-dc2a05678880
+			summarizeBy: sum
+			sourceColumn: DoW
+
+			annotation SummarizationSetBy = Automatic
+
+		column CorpMonthnum
+			dataType: int64
+			formatString: 0
+			lineageTag: 038065d2-24aa-4a10-84c2-5e8a53e23f25
+			summarizeBy: sum
+			sourceColumn: CorpMonthnum
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Week Number'
+			dataType: int64
+			formatString: 0
+			lineageTag: d3770c2b-c4d0-4e9c-bd16-7a733210deec
+			summarizeBy: sum
+			sourceColumn: Week Number
+
+			annotation SummarizationSetBy = Automatic
+
+		column CorpYear
+			dataType: string
+			lineageTag: 05ad4170-a8fb-4b61-9cde-7ab53f6a5c8e
+			summarizeBy: none
+			sourceColumn: CorpYear
+
+			annotation SummarizationSetBy = Automatic
+
+		column 'Week Offset'
+			dataType: int64
+			formatString: 0
+			lineageTag: 31e8a9f2-3568-4f92-9b44-a1b06327b804
+			summarizeBy: sum
+			sourceColumn: Week Offset
+
+			annotation SummarizationSetBy = Automatic
+
+		partition Calendar = m
+			mode: import
+			source = ```
+					let
+					    // ONLY EDIT THESE VALUES
+					    StartDate = #date(2000, 1, 1),  // Update the date you want your calendar table to start here the format is yyyy, mm, dd
+					    EndDateYearOffset = 1, //Set Offset to 0 to use the HardEndDate below 
+					    HardEndDate = #date(2024, 12, 31),  // Update the date you want your calendar table to start here the format is yyyy, mm, dd
+					    CorpMonthStart = 8,             // Month number for corporate Calendar
+					    SoW = 0,                        // First Day of Week - 0 - 6 0 = Sunday, 1 = Monday, 2 =  Tuesday...
+					    // END OF CONFIGURATION
+					    EndDate = if EndDateYearOffset <> 0 then #date(Date.Year(DateTime.Date(DateTime.LocalNow()))+EndDateYearOffset, 12, 31) else HardEndDate,
+					    CurrentDate = DateTime.Date(DateTime.LocalNow()),
+					    CorpMonthEnd = CorpMonthStart - 1,
+					    CorpDiff = 12 - CorpMonthStart + 1,
+					    DayCount = Duration.Days(EndDate - StartDate) + 1,
+					    Calendar = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),
+					    Table = Table.FromList(Calendar, Splitter.SplitByNothing(), {"Date"}),
+					    AddYear = Table.AddColumn(Table, "Year", each Date.Year([Date])),
+					    AddMonth = Table.AddColumn(AddYear, "Month", each Date.Month([Date])),
+					    AddDay = Table.AddColumn(AddMonth, "Day", each Date.Day([Date])),
+					    AddMonthName = Table.AddColumn(AddDay, "Month Name", each Date.ToText([Date], "MMMM")),
+					    AddDayName = Table.AddColumn(AddMonthName, "Day Name", each Date.ToText([Date], "dddd")),
+					    AddFormattedDate = Table.AddColumn(AddDayName, "Formatted Date", each Date.ToText([Date], "dd-MMM-yyyy")),
+					    AddMonthYear = Table.AddColumn(AddFormattedDate, "MonthYear", each Date.ToText([Date], "MMM-yyyy")),
+					    AddMonthOffset = Table.AddColumn(AddMonthYear, "Month Offset", each (Date.Year([Date]) - Date.Year(CurrentDate)) * 12 + Date.Month([Date]) - Date.Month(CurrentDate), Int64.Type),
+					    AddDayOffset = Table.AddColumn(AddMonthOffset, "Day Offset", each Date.From([Date]) - Date.From(CurrentDate), Int64.Type),
+					    AddYearOffset = Table.AddColumn(AddDayOffset, "YearOffset", each Date.Year([Date])- Date.Year(CurrentDate), Int64.Type),
+					    AddDayofWeek = Table.AddColumn(AddYearOffset, "DoW", each Date.DayOfWeek([Date]), Int64.Type),
+					    AddCorporateMonth = Table.AddColumn(AddDayofWeek, "CorpMonthnum", each if Date.Month([Date]) >= CorpMonthStart then Date.Month([Date]) - CorpMonthEnd else Date.Month([Date]) + CorpDiff, Int64.Type),
+					    AddWeekNumber = Table.AddColumn(AddCorporateMonth, "Week Number", each Date.WeekOfYear(Date.AddDays([Date], 7 - Date.DayOfWeek([Date], SoW))), Int64.Type),
+					    #"Added Custom" = Table.AddColumn(AddWeekNumber, "CorpYear", each if [Month] > CorpMonthEnd then "FY-" & Text.From([Year]) else "FY-" & Text.From([Year]-1)),
+					    AddWeekOffset = Table.AddColumn(#"Added Custom", "Week Offset", each Number.RoundDown(Duration.Days(Date.StartOfWeek([Date], SoW) - Date.StartOfWeek(CurrentDate, SoW)) / 7), Int64.Type),
+					    #"Changed Type" = Table.TransformColumnTypes(AddWeekOffset,{{"Date", type date}, {"Year", type text}, {"Month", Int64.Type}, {"Day", Int64.Type}, {"Month Name", type text}, {"Day Name", type text}, {"Formatted Date", type text}, {"MonthYear", type text}, {"Day Offset", Int64.Type}, {"CorpYear", type text}})
+					in
+					    #"Changed Type"
+					```
+
+		changedProperty = Name
+
+		annotation PBI_NavigationStepName = Navigation
+
+		annotation PBI_ResultType = Table
+

@@ -1,0 +1,120 @@
+createOrReplace
+
+	table '_Time Intelligence'
+		lineageTag: 93b2273c-c3f7-4e55-818a-25ac24dfcab7
+
+		calculationGroup
+
+			calculationItem Current = SELECTEDMEASURE()
+
+			calculationItem MTD = TOTALMTD(SELECTEDMEASURE(), 'Calendar'[Date])
+
+			calculationItem QTD = TOTALQTD ( SELECTEDMEASURE ( ), 'calendar'[Date])
+
+			calculationItem YTD = ```
+					TOTALYTD ( SELECTEDMEASURE ( ), 'Calendar'[Date])
+					
+					```
+
+			calculationItem LMTD =
+					CALCULATE(
+					    SELECTEDMEASURE(),
+					    DATESMTD(
+					        DATEADD(
+					            'Calendar'[Date],
+					            -1,
+					            MONTH
+					        )
+					    )
+					)
+
+			calculationItem LQTD =
+					CALCULATE(
+					    SELECTEDMEASURE(),
+					    DATESQTD(
+					        DATEADD(
+					            'Calendar'[Date],
+					            -1,
+					            QUARTER
+					        )
+					    )
+					)
+					
+			calculationItem LYTD =
+					CALCULATE(
+					    SELECTEDMEASURE(),
+					    DATESYTD(
+					        DATEADD(
+					            'Calendar'[Date],
+					            -1,
+					            Year
+					        )
+					    )
+					)
+
+			calculationItem MoM =
+					VAR __CTD = CALCULATE(SELECTEDMEASURE(), DATESMTD('Calendar'[Date]))
+					VAR __PTD = CALCULATE(SELECTEDMEASURE(), DATESMTD(DATEADD('Calendar'[Date],-1,Month)))
+					VAR __EVal = __CTD - __PTD
+					RETURN
+					__Eval
+
+			calculationItem QoQ =
+					VAR __CTD = CALCULATE(SELECTEDMEASURE(), DATESQTD('Calendar'[Date]))
+					VAR __PTD = CALCULATE(SELECTEDMEASURE(), DATESQTD(DATEADD('Calendar'[Date],-1,Quarter)))
+					VAR __EVal = __CTD - __PTD
+					RETURN
+					__Eval
+
+			calculationItem YoY =
+					VAR __CTD = CALCULATE(SELECTEDMEASURE(), DATESYTD('Calendar'[Date]))
+					VAR __PTD = CALCULATE(SELECTEDMEASURE(), DATESYTD(DATEADD('Calendar'[Date],-1,YEAR)))
+					VAR __EVal = __CTD - __PTD
+					RETURN
+					__Eval
+
+			calculationItem MOM% =
+					VAR __CTD = CALCULATE(SELECTEDMEASURE(), DATESMTD('Calendar'[Date]))
+					VAR __PTD = CALCULATE(SELECTEDMEASURE(), DATESMTD(DATEADD('Calendar'[Date],-1,Month)))
+					VAR __EVal = DIVIDE((__CTD - __PTD), __PTD)
+					RETURN
+					__Eval
+
+				formatStringDefinition = "0.0%"
+
+			calculationItem QOM% =
+					VAR __CTD = CALCULATE(SELECTEDMEASURE(), DATESQTD('Calendar'[Date]))
+					VAR __PTD = CALCULATE(SELECTEDMEASURE(), DATESQTD(DATEADD('Calendar'[Date],-1,QUARTER)))
+					VAR __EVal = DIVIDE((__CTD - __PTD), __PTD)
+					RETURN
+					__Eval
+
+				formatStringDefinition = "0.0%"
+
+			calculationItem YOM% =
+					VAR __CTD = CALCULATE(SELECTEDMEASURE(), DATESYTD('Calendar'[Date]))
+					VAR __PTD = CALCULATE(SELECTEDMEASURE(), DATESYTD(DATEADD('Calendar'[Date],-1,Year)))
+					VAR __EVal = DIVIDE((__CTD - __PTD), __PTD)
+					RETURN
+					__Eval
+
+				formatStringDefinition = "0.0%"
+
+		column 'Time Intel'
+			dataType: string
+			lineageTag: cfd7d617-cb49-4ef1-a54f-735682173815
+			summarizeBy: none
+			sourceColumn: Name
+			sortByColumn: Ordinal
+
+			annotation SummarizationSetBy = Automatic
+
+		column Ordinal
+			dataType: int64
+			isHidden
+			lineageTag: c17745e0-04e7-40d5-be57-f1d0f7b9bbd1
+			summarizeBy: sum
+			sourceColumn: Ordinal
+
+			annotation SummarizationSetBy = Automatic
+
