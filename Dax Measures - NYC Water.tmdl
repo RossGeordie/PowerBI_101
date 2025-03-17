@@ -1,0 +1,232 @@
+createOrReplace
+
+	table 'DAX Measures'
+		lineageTag: 26255376-5de5-467a-9d8b-99fcea28b6ec
+
+		measure Inspections = ```
+				
+				COUNTROWS(Inspections)
+				
+				```
+			formatString: #,0
+			lineageTag: 346899f8-c4fe-44d8-919e-433c0248da15
+
+			changedProperty = FormatString
+
+		measure Buildings = COUNTROWS(Buildings)
+			displayFolder: Buildings
+			lineageTag: edfe0ad0-d90f-4766-89bf-c4a7f0e3535f
+
+			changedProperty = DisplayFolder
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure InternalStructureAll = COUNTA(Inspections[GI_RESULT_INTERNAL_STRUCTURE])
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: a4d06468-77e1-4d92-85b6-f3ef7f1065cb
+
+		measure InternalStructureIssue = CALCULATE([InternalStructureAll],Inspections[GI_RESULT_INTERNAL_STRUCTURE]="A")
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: f5573026-d310-45c2-887c-74c4e68cc334
+
+		measure InternalStructurePCT = DIVIDE([InternalStructureIssue],[InternalStructureAll],BLANK())
+			formatString: 0%;-0%;0%
+			displayFolder: General Inspection
+			lineageTag: 42793baa-4322-4d20-b351-24d795d9c94e
+
+		measure ExternalStructureAll = COUNTA(Inspections[GI_RESULT_EXTERNAL_STRUCTURE])
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: 59fc5388-191b-42cf-9e6f-56b859464312
+
+		measure ExternalStructureIssue = CALCULATE([ExternalStructureAll],Inspections[GI_RESULT_EXTERNAL_STRUCTURE]="A")
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: 72b3dc7b-d586-4b09-a03a-544ab2b6d48a
+
+		measure ExternalStructurePCT = DIVIDE([ExternalStructureIssue],[ExternalStructureAll],blank())
+			formatString: 0%;-0%;0%
+			displayFolder: General Inspection
+			lineageTag: 86e8d3b7-4e06-49c2-a834-4e40a7bc0f99
+
+		measure OverflowPipesAll = COUNTA(Inspections[GI_RESULT_OVERFLOW_PIPES])
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: 524aedb4-a5d2-4791-8b04-8a809b8b855c
+
+		measure OverflowPipesIssues = CALCULATE([OverflowPipesAll],Inspections[GI_RESULT_OVERFLOW_PIPES] = "A")
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: cbbbb474-9449-468c-ab43-701b0bf618e8
+
+		measure OverflowPipesPCT = DIVIDE([OverflowPipesIssues],[OverflowPipesAll],blank())
+			formatString: 0%;-0%;0%
+			displayFolder: General Inspection
+			lineageTag: b304775f-383e-4eb0-b7ad-ecf40a6c3c58
+
+		measure AccessLaddersAll = COUNTA(Inspections[GI_RESULT_ACCESS_LADDERS])
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: 653cc967-9205-4210-be40-c9433ae8c1f8
+
+		measure AccessLaddersIssues = CALCULATE([AccessLaddersAll],Inspections[GI_RESULT_ACCESS_LADDERS]="A")
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: 65eb58ca-b897-4654-92ad-92fc25fc13a6
+
+		measure AccessLaddersPCT = DIVIDE([AccessLaddersIssues],[AccessLaddersAll],blank())
+			formatString: 0%;-0%;0%
+			displayFolder: General Inspection
+			lineageTag: 8bae93cf-7e63-47ce-9e86-d6afd82f740d
+
+		measure AirVentsAll = COUNTA(Inspections[GI_RESULT_AIR_VENTS])
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: f0fb0ff5-a965-4f37-9c32-12f20795e639
+
+		measure AirVentsIssues = CALCULATE([AirVentsAll],Inspections[GI_RESULT_AIR_VENTS]="A")
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: ed33e898-b1a5-4f7f-a094-244d508580a2
+
+		measure AirVentPCT = DIVIDE([AirVentsIssues],[AirVentsAll],blank())
+			formatString: 0%;-0%;0%
+			displayFolder: General Inspection
+			lineageTag: ed0e5574-377d-46e6-884c-5813c0e14f92
+
+		measure RoofAccessAll = COUNTA(Inspections[GI_RESULT_ROOF_ACCESS])
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: b765ec94-d304-414f-b9b7-7ce2179f6851
+
+		measure RoofAccessIssues = CALCULATE([RoofAccessAll],Inspections[GI_RESULT_ROOF_ACCESS]="A")
+			formatString: 0
+			displayFolder: General Inspection
+			lineageTag: 53b90fde-c5e7-4b5a-9702-695dfa2bca95
+
+		measure RoofAccessPCT = DIVIDE([RoofAccessIssues],[RoofAccessAll],BLANK())
+			formatString: 0%;-0%;0%
+			displayFolder: General Inspection
+			lineageTag: 006a0440-fc20-46b6-ad5e-43f95c01b82f
+
+		measure ButtonText =
+				
+				SELECTEDVALUE(Buildings[BIN],blank())
+			formatString: 0
+			lineageTag: e4b35476-b2bb-41c6-bfb3-fd08c25bde09
+
+		measure EnableButton = If (HASONEVALUE(Buildings[BIN]),TRUE(),FALSE())
+			formatString: """TRUE"";""TRUE"";""FALSE"""
+			lineageTag: b7bab603-a601-4cae-ac3d-b244d6c2f44c
+
+		measure InspectedBy% =
+				
+				VAR tInspect = [Inspections]
+				VAR AllInspections = CALCULATE([Inspections], All(Inspections[INSPECTION_BY_FIRM]))
+				RETURN
+				DIVIDE(tInspect,AllInspections)
+			lineageTag: ffe55712-2810-4c06-a977-add67d17fd32
+
+			changedProperty = FormatString
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure InspectedBy%_Test =
+				
+				VAR tInspect = [Inspections] -- COUNTROWS(Inspection)
+				VAR AllInspections = CALCULATE([Inspections], All(Inspections))
+				RETURN
+				DIVIDE(tInspect,AllInspections)
+			formatString: 0.0%;-0.0%;0.0%
+			lineageTag: 254baa66-5afd-41b3-95e2-75484009e75b
+
+			changedProperty = FormatString
+
+		measure 'Business Rule Count' =
+				
+				CALCULATE(
+				    COUNTROWS ( Inspections ),
+				    Buildings[BOROUGH] = "BRONX"
+				)
+			lineageTag: b5af10e5-f531-4bbc-8e58-a4b37111b49f
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		measure 'Count of Buildings' =
+				
+				VAR Test = COUNTROWS(Buildings)
+				RETURN
+				IF (
+				    ISBLANK(Test),
+				    0,
+				    Test
+				)
+			formatString: #,0
+			lineageTag: 2002541a-78e2-4c9b-aca6-0b1d0ba0b947
+
+			changedProperty = FormatString
+
+		measure 'Buildings Overdue' =
+				
+				CALCULATE ( [Buildings],
+				        Buildings[State] = "Overdue"
+				)
+			formatString: 0
+			displayFolder: Buildings
+			lineageTag: a7f8a800-dcbb-49a7-893d-96466049b793
+
+			changedProperty = FormatString
+
+			changedProperty = DisplayFolder
+
+		measure 'Overdue %' =
+				
+				DIVIDE([Buildings Overdue],[Buildings],0)
+			formatString: 0%;-0%;0%
+			displayFolder: Buildings
+			lineageTag: d6d47fc1-ebab-4e53-8d70-054ff9e3b8e6
+
+			kpi
+				targetExpression = [Overdue %]
+				statusGraphic: Traffic Light - Single
+				statusExpression = ```
+					VAR Red = 0.25
+					VAR Yellow = 0.15
+					VAR Test = [Overdue %]
+					RETURN
+					    IF (
+					        NOT ISBLANK ( Test ),
+					        SWITCH ( TRUE (), 
+					        Test > Red, -1, 
+					        Test < Yellow, 1, 0 )
+					    )
+					```
+
+			changedProperty = FormatString
+
+			changedProperty = DisplayFolder
+
+		column Column1
+			dataType: string
+			isHidden
+			lineageTag: 0c676d06-560f-4a66-a584-8823f10707bc
+			summarizeBy: none
+			sourceColumn: Column1
+
+			changedProperty = IsHidden
+
+			annotation SummarizationSetBy = Automatic
+
+		partition Calculations-2dd9a2af-64b5-4307-927f-75b5099fe2b0 = m
+			mode: import
+			source =
+					let
+					    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+					    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}})
+					in
+					    #"Changed Type"
+
+		annotation PBI_ResultType = Table
+
