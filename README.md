@@ -11,6 +11,7 @@ how to get started and how to deliver your first insights to a company. We use t
 one (Sample-Superstore.csv) and the real-world data from the New York Rooftop Water Tower Inspections (Wk4). 
 
 Semester 2 - Week 5 - 8 - https://www.youtube.com/watch?v=nZOy3TWRd1Q
+
 What goes into your models to make sense of them within Power BI. We then look at Time Intelligence, Calculation
 Groups and finally TMDL view. We really advice reviewing the files and taking time over this set. Getting these
 right will make a significant difference to your Development. 
