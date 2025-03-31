@@ -17,6 +17,7 @@ Groups and finally TMDL view. We really advice reviewing the files and taking ti
 right will make a significant difference to your Development. 
 
 Semester 3 - Week 9 - 12 - In progress
+
 A review of the "layered" nature of Power BI. A deep dive into the use of Maps to support navigation and
 analysis, with custom tooltips and drillthourgh. Then we look at using Decomposition Trees and Key
 Influencers visuals to support your analytics efforts. 
