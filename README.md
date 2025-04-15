@@ -22,3 +22,13 @@ A review of the "layered" nature of Power BI. A deep dive into the use of Maps t
 analysis, with custom tooltips and drillthourgh. Then we look at using Decomposition Trees and Key
 Influencers visuals to support your analytics efforts. 
 
+Semester 4 - Week 13 - 16 - Starting soon
+Looking in depth at the reality of living with Power BI for a business, how environments should be se out
+and what to focus on as we ensure that your business has a rich Analytics platform ready not just for
+today but for your future needs as well. 
+
+Support Report Conten
+
+England Food Hygine - Updates Daily - https://app.powerbi.com/view?r=eyJrIjoiMWVlNmMzYmYtNzY2Mi00ODliLWIyZmMtZjQxMTE5Yjc5Y2U2IiwidCI6ImZjOWNjMDdlLTA4OWItNDM2OC05YzIzLTVhNmU4MGY5OTNhNCJ9
+Newcastle parkruns - Updated Weekly - https://app.powerbi.com/view?r=eyJrIjoiZTE0MjA5NjYtOGRhNS00MDdkLTg4MjEtNzFjMTBmY2YyZDJiIiwidCI6ImZjOWNjMDdlLTA4OWItNDM2OC05YzIzLTVhNmU4MGY5OTNhNCJ9
+NYC Taxis - Not being updated at present - https://app.powerbi.com/view?r=eyJrIjoiMDQ2NDg4OTQtNzQ4YS00Y2I1LWEwY2ItNDEwYjIyNGEyNzBmIiwidCI6ImZjOWNjMDdlLTA4OWItNDM2OC05YzIzLTVhNmU4MGY5OTNhNCJ9
